@@ -52,26 +52,30 @@ if args.mode == 'compile':
     tasks = 7
 
     progress(tasks,"Construct the tiling...")
-    pipe(['python2','tiling.py'])
+    pipe(['python','tiling.py'])
 
-    progress(tasks,"Generating paganini specification...")
-    pipe(['bb','--force','-s','output.txt'],'paganini.pg')
+    progress(tasks,"Generating, medulla specification...")
+    pipe(['bb', 'spec', '-f', '-r', 'algebraic', '-i', 'output.txt'], 'paganini.pg')
 
     progress(tasks,"Calculating tuning parameters...")
-    pipe(['paganini','-i','paganini.pg','-p','1.0e-20','-s','SCS', '-t', 'rational'],'bb.param')
+    #pipe(['medulla','-i','paganini.pg','-p','1.0e-20','-s','SCS', '-t', 'rational'],'bb.param')
+    pipe(['medulla','-i','paganini.pg','-p','1.0e-20', '-t', 'rational'],'bb.param')
+
 
     progress(tasks,"Sampler generation...")
-    pipe(['bb','--force','-p','bb.param','output.txt'],'tiling-generator/src/Sampler.hs')
+    #pipe(['bb','--force','-p','bb.param','output.txt'],'tiling-generator/src/Sampler.hs')
+    pipe(['bb', 'compile', '-f', '-t','bb.param', '--format', 'algebraic', '-i', 'output.txt'],'tiling-generator/src/Sampler.hs')
 
     progress(tasks,"Drop bb generator parameters from output.txt...")
     pipe(['tail','-n','+4','output.txt'],'output_drop.txt')
 
     progress(tasks,"Generating string representation functions...")
-    pipe(['python2','smyt.py','output_drop.txt'],'tiling-generator/src/Sampler.hs','a')
+    pipe(['python','smyt.py','output_drop.txt'],'tiling-generator/src/Sampler.hs','a')
 
     os.chdir('tiling-generator/')
     progress(tasks,"Compilation... May take some time...")
-    pipe(['stack','install'])
+    #pipe(['stack','install'])
+    pipe(['cabal','install','--overwrite-policy=always'])
     os.chdir('..')
 
     progress(tasks,"Done.")
@@ -85,11 +89,18 @@ if args.mode == "generate":
                 + ", " + str(ub) + "])")
 
         pipe(['tiling-generator',str(lb),str(ub)], 'tiling.viz')
+        log("sed")
         pipe(['sed', '$ d','tiling.viz'], 'tiling_clean.viz')
+        log("cat")
         pipe(['cat','input.tile'], 'final_tiling.viz')
+        exit(0)
+
+        log("awk")
         pipe(['awk','END {print NR}','tiling_clean.viz'], 'final_tiling.viz','a')
+        log("cat")
         pipe(['cat','tiling_clean.viz'], 'final_tiling.viz','a')
-        read(['python2','viz_tilings.py','output'+str(idx)+'.eps'], 'final_tiling.viz')
+        log("viz_tilings")
+        read(['python','viz_tilings.py','output'+str(idx)+'.eps'], 'final_tiling.viz')
 
     log("Generating an EPS file...")
     pipe(['convert','-density','1200','-quality','100','output*.eps','+append','tiling.eps'])

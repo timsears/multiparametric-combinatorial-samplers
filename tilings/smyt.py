@@ -61,10 +61,10 @@ with open(input_file, 'r') as f:
                 parse_constructor(line)
 
 print("")
-for datatype, constrs in output.iteritems():
+for datatype, constrs in iter(output.items()):
     print ("instance Show " + datatype + " where")
-    for constr, (position,tile) in constrs.iteritems():
-        if position < 0 or tile < 0 or datatype.startswith('Tile'):
+    for constr, (position,tile) in iter(constrs.items()):
+        if position == '' or tile == '' or int(position) < 0 or int(tile) < 0 or datatype.startswith('Tile'):
             print ("   show " + constr + " = \"\"")
         else:
             print ("   show (" + constr + " _ x) = \"" + str(position)

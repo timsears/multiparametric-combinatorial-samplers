@@ -24,12 +24,12 @@ try:
     import sys
     import os
 except:
-    print "Something went wrong, cannot import package 'sys' or 'os'"
+    print("Something went wrong, cannot import package 'sys' or 'os'")
     exit(0)
 
-if sys.version_info.major > 2:
-    sys.stderr.write('You are using Python 3. Please use Python 2.\n')
-    exit(0)
+# if sys.version_info.major > 2:
+#     sys.stderr.write('You are using Python 3. Please use Python 2.\n')
+#     exit(0)
 
 #-- Better hints at non-installed packages
 list_of_noninstalled_packages = []
@@ -48,10 +48,10 @@ try:
 except:
     list_of_noninstalled_packages += ['matplotlib']
 
-try:
-    import colorsys
-except:
-    list_of_noninstalled_packages += ['colorsys']
+# try:
+#     import colorsys
+# except:
+#     list_of_noninstalled_packages += ['colorsys']
 
 try:
     import numpy as np
@@ -81,7 +81,7 @@ def rand_cmap(nlabels):
     high = 0.9
     randRGBcolors = [(np.random.uniform(low=low, high=high),
                       np.random.uniform(low=low, high=high),
-                      np.random.uniform(low=low, high=high)) for i in xrange(nlabels)]
+                      np.random.uniform(low=low, high=high)) for i in range(nlabels)]
 
     random_colormap = LinearSegmentedColormap.from_list('new_map', randRGBcolors, N=nlabels)
 
@@ -221,16 +221,16 @@ def display_tile(tile, file=None):
         for column in row:
             if column == 1:
                 if file == None:
-                    print symbol_yes,
+                    print(symbol_yes),
                 else:
                     file.write(symbol_yes)
             else:
                 if file == None:
-                    print symbol_no,
+                    print(symbol_no),
                 else:
                     file.write(symbol_no)
         if file == None:
-            print ''
+            print('')
         else:
             f.write('\n')
 
@@ -241,21 +241,30 @@ def create_empty_tile(height, width):
 ## Read the tiles
 #
 
+# def myint(x):
+#     try: return(int(x))
+#     except: return(0)
+
+myint = int
+
+def log(message):
+    sys.stderr.write(message + '\n')
+
 tiles = []
 tiles_areas = []
 total_area = 0.0
 with sys.stdin as f:
     lines = f.readlines()
-    [number_of_tiles, total_width,] = map(int, lines[0].split(' '))
+    [number_of_tiles, total_width,] = map(myint, lines[0].split(' '))
     frequencies = np.zeros(number_of_tiles)
     line_idx = 1
-    for idx in xrange(number_of_tiles):
+    for idx in range(number_of_tiles):
         current_area = 0
-        [n_rows, n_columns] = map(int, lines[line_idx].split(' '))
+        [n_rows, n_columns] = map(myint, lines[line_idx].split(' '))
         line_idx += 1
         current_tile = create_empty_tile(n_rows, n_columns)
-        for row in xrange(n_rows):
-            for column in xrange(n_columns):
+        for row in range(n_rows):
+            for column in range(n_columns):
                 if lines[line_idx][column] == symbol_yes:
                     current_tile[row][column] = 1
                     current_area += 1
@@ -264,11 +273,13 @@ with sys.stdin as f:
             line_idx += 1
         tiles += [current_tile]
         tiles_areas += [current_area]
-    n_placements = int(lines[line_idx].split(' ')[0])
+    n_placements = myint(lines[line_idx].split(' ')[0])
     line_idx += 1
     sequence = []
-    for idx in xrange(n_placements):
-        [pos_x, tile_idx] = map(int, lines[line_idx].split(' '))
+    for idx in range(n_placements):
+        log(str(idx))
+        log(str(lines[line_idx].split(' ')))
+        [pos_x, tile_idx] = lines[line_idx].split(' ')
         sequence += [(tile_idx, pos_x)]
         line_idx += 1
         frequencies[tile_idx] += tiles_areas[tile_idx]
@@ -280,8 +291,8 @@ frequencies = frequencies / total_area
 
 
 if flag_debug:
-    for tile_ind in xrange(number_of_tiles):
-        print "Tile " + str(tile_ind)
+    for tile_ind in range(number_of_tiles):
+        print("Tile " + str(tile_ind))
         display_tile(tiles[tile_ind])
 
 #
@@ -315,7 +326,7 @@ def there_is_a_square(shiftx, shifty, tile, square_pos):
 ##
 ##     # Let's find the starting point
 ##     starting_point = None
-##     for i in xrange(tile_height):
+##     for i in range(tile_height):
 ##         if tile[i][0] == 1:
 ##             starting_point = (i, 0)
 ##     assert starting_point != None, "Some of the tiles doesn't match goodness assumption"
@@ -382,7 +393,7 @@ def compute_contour(tile, step = 1, posx = 0, posy = 0):
 
     # Let's find the starting point
     starting_point = None
-    for i in xrange(tile_height):
+    for i in range(tile_height):
         if tile[i][0] == 1:
             starting_point = (i, 0)
     assert starting_point != None, "Some tile doesn't match goodness assumption"
@@ -451,8 +462,8 @@ def compute_contour(tile, step = 1, posx = 0, posy = 0):
 
 if flag_debug:
     display_tile(tiles[-1])
-    print len(compute_contour(tiles[-1]))
-    print compute_contour(tiles[-1])
+    print(len(compute_contour(tiles[-1])))
+    print(compute_contour(tiles[-1]))
 
 #
 ## The contour is composed. Now we can use contour primitives
@@ -473,7 +484,7 @@ def compute_lower_height_profile(tile):
     width = len(tile[0])
     height = len(tile)
     result = [0]*width
-    for col in xrange(width):
+    for col in range(width):
         for row in range(height - 1,-1,-1): # decreasing 'for'
             if tile[row][col] == 0:
                 result[col] += 1
@@ -485,7 +496,7 @@ def compute_higher_height_profile(tile):
     width = len(tile[0])
     height = len(tile)
     result = [0]*width
-    for col in xrange(width):
+    for col in range(width):
         for row in range(0,height):
             if tile[row][col] == 0:
                 result[col] += 1
@@ -497,7 +508,7 @@ def compute_higher_height_profile(tile):
 lower_profiles  = []
 higher_profiles = []
 
-for tile_idx in xrange(number_of_tiles):
+for tile_idx in range(number_of_tiles):
     lower_profiles  += [compute_lower_height_profile(tiles[tile_idx]) ]
     higher_profiles += [compute_higher_height_profile(tiles[tile_idx])]
 
@@ -571,7 +582,7 @@ def get_tile_positions_from_sequence(tiles, sequence, width):
 (coordinates, height) = get_tile_positions_from_sequence(tiles, sequence, total_width)
 
 # Revert all the tiles for display purposes
-for tile_ind in xrange(number_of_tiles):
+for tile_ind in range(number_of_tiles):
     tiles[tile_ind] = list(reversed(tiles[tile_ind]))
 
 fig1 = plt.figure()

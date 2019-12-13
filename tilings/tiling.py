@@ -19,16 +19,16 @@ def display_tile(tile, file=None):
         for column in row:
             if column == 1:
                 if file == None:
-                    print symbol_yes,
+                    print (symbol_yes)
                 else:
                     file.write(symbol_yes)
             else:
                 if file == None:
-                    print symbol_no,
+                    print (symbol_no)
                 else:
                     file.write(symbol_no)
         if file == None:
-            print ''
+            print ('')
         else:
             f.write('\n')
     #print ''
@@ -47,14 +47,14 @@ with open('input.tile', 'r') as f:
     lines = f.readlines()
     [number_of_tiles, total_width] = map(int, lines[0].split())
     line_idx = 1
-    for idx in xrange(number_of_tiles):
+    for idx in range(number_of_tiles):
         current_area = 0
         [n_rows, n_columns] = map(int, lines[line_idx].split())
         max_height = max(max_height, n_rows)
         line_idx += 1
         current_tile = create_empty_tile(n_rows, n_columns)
-        for row in xrange(n_rows):
-            for column in xrange(n_columns):
+        for row in range(n_rows):
+            for column in range(n_columns):
                 if lines[line_idx][column] == symbol_yes:
                     current_tile[row][column] = 1
                     current_area += 1
@@ -66,15 +66,15 @@ with open('input.tile', 'r') as f:
     # max_height += 1
 
 if flag_debug:
-    print tiles
+    print (tiles)
     map(display_tile, tiles)
-    print "Max Height =", max_height
+    print ("Max Height =", max_height)
 
 def compute_lower_height_profile(tile):
     width = len(tile[0])
     height = len(tile)
     result = [0]*width
-    for col in xrange(width):
+    for col in range(width):
         for row in range(height - 1,-1,-1): # decreasing 'for'
             if tile[row][col] == 0:
                 result[col] += 1
@@ -86,7 +86,7 @@ def compute_higher_height_profile(tile):
     width = len(tile[0])
     height = len(tile)
     result = [0]*width
-    for col in xrange(width):
+    for col in range(width):
         for row in range(0,height):
             if tile[row][col] == 0:
                 result[col] += 1
@@ -99,24 +99,24 @@ if flag_debug:
     display_tile(tiles[-1])
 
 if flag_debug:
-    print compute_lower_height_profile(tiles[-1])
+    print (compute_lower_height_profile(tiles[-1]))
 
 if flag_debug:
-    print compute_higher_height_profile(tiles[-1])
+    print (compute_higher_height_profile(tiles[-1]))
 
 # another technical definition
 
 def display_profile(profile, file = None):
     result = create_empty_tile(max_height, total_width)
     width = len(profile)
-    for idx in xrange(len(profile)):
-        for h in xrange(profile[idx]):
+    for idx in range(len(profile)):
+        for h in range(profile[idx]):
             result[max_height - h - 1][idx] = 1
     display_tile(result, file = file)
 
 def prune_profile(profile):
     min_index = min(profile)
-    for idx in xrange(len(profile)):
+    for idx in range(len(profile)):
         profile[idx] -= min_index
 
 def if_fits_give_profile(small_tile, large_tile_profile, pos):
@@ -168,17 +168,17 @@ def if_fits_give_profile(small_tile, large_tile_profile, pos):
 if flag_debug:
     display_tile(tiles[-1])
 
-    print "\nTrying to fit into position 1:"
+    print ("\nTrying to fit into position 1:")
     display_profile(if_fits_give_profile(tiles[-1], test_profile, 1))
-    print "Resulting profile:"
-    print if_fits_give_profile(tiles[-1], test_profile, 1)
+    print ("Resulting profile:")
+    print (if_fits_give_profile(tiles[-1], test_profile, 1))
 
 base = max_height + 1
 
 def convert_array_to_base_representation(array):
     base_repr = 0
     array_length = len(array)
-    for idx in xrange(array_length):
+    for idx in range(array_length):
         base_repr += array[idx] * base**idx
     return base_repr
 
@@ -187,23 +187,24 @@ def convert_base_representation_to_array(base_repr):
     idx = 0
     while base_repr > 0:
         digit = base_repr % base
-        base_repr /= base
+        base_repr //= base # use floor division!
+        #print ("debug", idx, digit, base, base_repr, total_width, len(result)) 
         result[idx] = digit
         idx += 1
     return result
 
 if flag_debug:
-    print convert_array_to_base_representation([0,1,1])
+    print (convert_array_to_base_representation([0,1,1]))
 
 if flag_debug:
     test_profile = [1,2,1,2]
-    print test_profile
-    print convert_base_representation_to_array(\
-          convert_array_to_base_representation(test_profile))
+    print (test_profile)
+    print (convert_base_representation_to_array(\
+          convert_array_to_base_representation(test_profile)))
     test_profile = if_fits_give_profile(tiles[-1], test_profile, 1)
-    print test_profile
-    print convert_base_representation_to_array(\
-          convert_array_to_base_representation(test_profile))
+    print (test_profile)
+    print (convert_base_representation_to_array(\
+          convert_array_to_base_representation(test_profile)))
 
 #
 ## Construct the (transposed) array of dependencies
@@ -223,19 +224,19 @@ dependency_array = [[None] * index_size for _ in range(index_size)]
 """
 not_display_indices = []
 
-for profile_repr in xrange(0, index_size):
+for profile_repr in range(0, index_size):
     profile = convert_base_representation_to_array(profile_repr)
     if min(profile) > 0:
         not_display_indices += [profile_repr]
     """
 
 if flag_progress:
-    print 'Eliminating unused transitions...'
+    print ('Eliminating unused transitions...')
 
-for profile_repr in xrange(0, index_size):
+for profile_repr in range(0, index_size):
     profile = convert_base_representation_to_array(profile_repr)
-    for tile_idx in xrange(number_of_tiles):
-        for pos in xrange(total_width):
+    for tile_idx in range(number_of_tiles):
+        for pos in range(total_width):
             to_profile = if_fits_give_profile(tiles[tile_idx], profile, pos)
             if to_profile == None:
                 continue
@@ -244,7 +245,7 @@ for profile_repr in xrange(0, index_size):
             dependency_array[to_profile_repr][profile_repr] = (tile_idx, pos)
 
     # display_profile(profile)
-    # print "==========="
+    # print ("===========")
 
 list_include_rows = [False] * index_size
 bfs_queue = deque([0])
@@ -258,10 +259,10 @@ while len(bfs_queue) > 0:
             list_include_rows[next_idx] = True
 
 if flag_debug:
-    print list_include_rows
+    print (list_include_rows)
 
 if flag_progress:
-    print 'done!'
+    print ('done!')
 
 global_counter = 0
 
@@ -269,7 +270,7 @@ global_counter = 0
 not_display_indices = []
 with open('output.txt', 'w+') as f:
     f.write('{- Compiled tiling grammar from '+ str('input.tile') + '\n')
-    for tile_ind in xrange(number_of_tiles):
+    for tile_ind in range(number_of_tiles):
         f.write("Tile " + str(tile_ind) + '\n')
         display_tile(tiles[tile_ind], f)
     f.write('[*] Excessive search window:\n')
@@ -277,7 +278,7 @@ with open('output.txt', 'w+') as f:
     f.write('[*] Number of variables = ' + str(number_of_tiles) + '\n')
     f.write('[*] Number of functions = ' + str(index_size - len(not_display_indices)))
     f.write(' -}\n')
-    for profile_ind in xrange(index_size):
+    for profile_ind in range(index_size):
         if profile_ind in not_display_indices:
             continue
         f.write('Tiling')
@@ -286,7 +287,7 @@ with open('output.txt', 'w+') as f:
         if profile_ind == 0:
             f.write('Eps (0) | ')
         first_object_in_grammar = True
-        for to_profile_ind in xrange(index_size):
+        for to_profile_ind in range(index_size):
             if to_profile_ind in not_display_indices:
                 continue
             if dependency_array[profile_ind][to_profile_ind] == None:
@@ -310,7 +311,7 @@ tiling_n_adjacent_profiles = [0] * index_size
 with open('output.txt', 'w+') as f:
     if flag_debug:
         f.write('{- Compiled tiling grammar from '+ str('input.tile') + '\n')
-        for tile_ind in xrange(number_of_tiles):
+        for tile_ind in range(number_of_tiles):
             f.write("Tile " + str(tile_ind) + '\n')
             display_tile(tiles[tile_ind], f)
         f.write('[*] Excessive search window:\n')
@@ -321,7 +322,7 @@ with open('output.txt', 'w+') as f:
     f.write('@module     Sampler\n')
     f.write('@withIO     y\n')
     f.write('@withShow   n\n')
-    for profile_ind in xrange(index_size):
+    for profile_ind in range(index_size):
         if not list_include_rows[profile_ind]:
             continue
         f.write('Tiling')
@@ -330,7 +331,7 @@ with open('output.txt', 'w+') as f:
         if profile_ind == 0:
             f.write('Eps (1) | ')
         first_object_in_grammar = True
-        for to_profile_ind in xrange(index_size):
+        for to_profile_ind in range(index_size):
             if not list_include_rows[to_profile_ind]:
                 continue
             if dependency_array[profile_ind][to_profile_ind] == None:
@@ -346,7 +347,7 @@ with open('output.txt', 'w+') as f:
             f.write('Tiling' + str(to_profile_ind) + ' (0)')
             tiling_n_adjacent_profiles[profile_ind] += 1
         f.write('.\n')
-    for tile_idx in xrange(number_of_tiles):
+    for tile_idx in range(number_of_tiles):
         f.write('Tile' + str(tile_idx) + ' = ' + 'T' + str(tile_idx))
         f.write(' (' + str(tiles_areas[tile_idx]) + ')')
         f.write(' [' + str(1.0 / number_of_tiles) + ']')
@@ -354,7 +355,7 @@ with open('output.txt', 'w+') as f:
 
     if flag_debug:
         f.write('{- \n')
-        for tiling_idx in xrange(index_size):
+        for tiling_idx in range(index_size):
             if not list_include_rows[tiling_idx]:
                 continue
             f.write('Tiling' + str(tiling_idx) + '\n')
@@ -370,16 +371,16 @@ import sys
 sys.stderr.write("Number of functions: " + str(sum(list_include_rows)) + "\n")
 
 """
-print "Constructing Paganini specification..."
+print ("Constructing Paganini specification...")
 
 with open('paganini_start.pg', 'w+') as f:
     f.write(str(number_of_tiles) + " " + str(sum(list_include_rows)) + "\n")
 
-    for profile_ind in xrange(index_size):
+    for profile_ind in range(index_size):
         if not list_include_rows[profile_ind]:
             continue
         f.write(str(tiling_n_adjacent_profiles[profile_ind]) + "\n")
-        for to_profile in xrange(index_size):
+        for to_profile in range(index_size):
             if dependency_array[profile_ind][to_profile] == None:
                 continue
             for i in range(to_profile):

@@ -15,7 +15,7 @@ def gen_paganini_spec (spec, tmpFile):
         popen.communicate()
 
 def gen_bb_spec (tmpFile, paganiniOut, prec, solver):
-    arg = ("python2", "../paganini.py", tmpFile, prec, solver)
+    arg = ("python", "../paganini.py", tmpFile, prec, solver)
     with open(paganiniOut, 'w') as pgFile:
         popen = subprocess.Popen(arg, stdout=pgFile)
         popen.communicate()
