@@ -29,10 +29,10 @@ deg_map = {}
 with open('input.deg', 'r') as f:
     lines = f.readlines()
     number_of_degrees = int(lines[0].strip())
-    for idx in range(0,number_of_degrees):
+    for idx in range(0, number_of_degrees):
         line = lines[idx+1].split()
         deg = int(line[0].strip()) # degree
-        assert deg_map.has_key(deg) == False, \
+        assert not(deg in deg_map) , \
                 "duplicate degree"
 
         if len(line) > 1:
@@ -58,7 +58,7 @@ with open('output.txt', 'w+') as f:
     f.write('@withShow   n\n')
 
     f.write("Tree = ")
-    for deg, freq in deg_map.iteritems():
+    for deg, freq in deg_map.items():
         if idx == 0:
             constr = ""
         else:

@@ -21,7 +21,7 @@ library
                      , transformers >= 0.4.2
                      , template-haskell >= 2.14
   default-language:    Haskell2010
-  ghc-options:         +RTS -K1G -RTS
+  ghc-options:         +RTS -K80G -RTS
   
 executable tiling-generator
   hs-source-dirs:      app

@@ -61,7 +61,6 @@ if args.mode == 'compile':
     #pipe(['medulla','-i','paganini.pg','-p','1.0e-20','-s','SCS', '-t', 'rational'],'bb.param')
     pipe(['medulla','-i','paganini.pg','-p','1.0e-20', '-t', 'rational'],'bb.param')
 
-
     progress(tasks,"Sampler generation...")
     #pipe(['bb','--force','-p','bb.param','output.txt'],'tiling-generator/src/Sampler.hs')
     pipe(['bb', 'compile', '-f', '-t','bb.param', '--format', 'algebraic', '-i', 'output.txt'],'tiling-generator/src/Sampler.hs')
@@ -84,7 +83,7 @@ if args.mode == 'compile':
 if args.mode == "generate":
 
     (lb, ub) = (500, 520)
-    for idx in range(1,9):
+    for idx in range(1,2):
         log("Sampling tile " + str(idx) + " ... (size window [" + str(lb)
                 + ", " + str(ub) + "])")
 

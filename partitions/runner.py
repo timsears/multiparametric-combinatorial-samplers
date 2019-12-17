@@ -51,10 +51,10 @@ if args.mode == "generate":
 
     tasks = 3
     progress(tasks, 'Generating input.viz...')
-    pipe(['python2','partitions.py'],'input.viz')
+    pipe(['python','partitions.py'],'input.viz')
 
     progress(tasks, 'Running visualisation script...')
-    read(['python2','../tilings/viz_tilings.py','bose.eps','Spectral'],'input.viz')
+    read(['python','../tilings/viz_tilings.py','bose.eps','Spectral'],'input.viz')
 
     progress(tasks, 'Generating PNG file...')
     pipe(['convert','-density','300','bose.eps','bose.png'])

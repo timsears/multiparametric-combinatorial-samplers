@@ -47,30 +47,30 @@ if args.mode == 'compile':
 
     os.chdir('tree-visualiser/')
     progress(tasks,"Tree generator compilation... May take some time...")
-    pipe(['stack','install'])
+    pipe(['cabal','install'])
     os.chdir('..')
 
     progress(tasks,"Generating bb specification...")
-    pipe(['python2','trees.py'])
+    pipe(['python','trees.py'])
 
     progress(tasks,"Generating paganini specification...")
-    pipe(['bb','--force','-s','output.txt'],'paganini.pg')
+    pipe(['bb','spec', '-f','-i','output.txt'],'paganini.pg')
 
     progress(tasks,"Calculating tuning parameters...")
-    pipe(['paganini','-i','paganini.pg','-p','1.0e-20'],'bb.param')
+    pipe(['medulla','-i','paganini.pg','-p','1.0e-20'],'bb.param')
 
     progress(tasks,"Sampler generation...")
-    pipe(['bb','--force','-p','bb.param','output.txt'],'tree-generator/src/Sampler.hs')
+    pipe(['bb','compile','-f','-t','bb.param','-i','output.txt'],'tree-generator/src/Sampler.hs')
 
     progress(tasks,"Drop bb generator parameters from output.txt...")
     pipe(['tail','-n','+4','output.txt'],'output_drop.txt')
 
     progress(tasks,"Generating string representation functions...")
-    pipe(['python2','smyt.py','output_drop.txt'],'tree-generator/src/Sampler.hs','a')
+    pipe(['python','smyt.py','output_drop.txt'],'tree-generator/src/Sampler.hs','a')
 
     os.chdir('tree-generator/')
     progress(tasks,"Compilation... May take some time...")
-    pipe(['stack','install'])
+    pipe(['cabal','install','--overwrite-policy=always'])
     os.chdir('..')
 
     progress(tasks,"Done.")
@@ -88,6 +88,8 @@ if args.mode == "generate":
     log("Generating a EPS file...")
     pipe(['dot','-Teps','tree.dot'], 'tree.eps')
 
+    progress(tasks, 'Generating PNG file...')
+    pipe(['convert','-density','300','tree.eps','tree.png'])
     log("Done.")
     exit(0)
 
@@ -100,6 +102,7 @@ if args.mode == "clean":
     pipe(['rm','tree.dot'])
     pipe(['rm','tree.in'])
     pipe(['rm','tree.eps'])
+    pipe(['rm','tree.png'])
     exit(0)
 
 log("Illegal runner mode: expected compile, generate or clean.")

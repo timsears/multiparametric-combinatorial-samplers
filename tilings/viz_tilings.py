@@ -122,7 +122,7 @@ usage:""" + bcolors.ENDC + """ cat input.txt | python2 viz_tilings.py output.eps
 """
 
 hint_message = """
-help:  python2 viz_tilings.py -h
+help:  python viz_tilings.py -h
 """
 
 input_message = """
@@ -237,15 +237,6 @@ def display_tile(tile, file=None):
 def create_empty_tile(height, width):
     return [[0]*width for _ in range(height)]
 
-#
-## Read the tiles
-#
-
-# def myint(x):
-#     try: return(int(x))
-#     except: return(0)
-
-myint = int
 
 def log(message):
     sys.stderr.write(message + '\n')
@@ -255,12 +246,12 @@ tiles_areas = []
 total_area = 0.0
 with sys.stdin as f:
     lines = f.readlines()
-    [number_of_tiles, total_width,] = map(myint, lines[0].split(' '))
+    [number_of_tiles, total_width,] = map(int, lines[0].split(' '))
     frequencies = np.zeros(number_of_tiles)
     line_idx = 1
     for idx in range(number_of_tiles):
         current_area = 0
-        [n_rows, n_columns] = map(myint, lines[line_idx].split(' '))
+        [n_rows, n_columns] = map(int, lines[line_idx].split(' '))
         line_idx += 1
         current_tile = create_empty_tile(n_rows, n_columns)
         for row in range(n_rows):
@@ -273,13 +264,11 @@ with sys.stdin as f:
             line_idx += 1
         tiles += [current_tile]
         tiles_areas += [current_area]
-    n_placements = myint(lines[line_idx].split(' ')[0])
+    n_placements = int(lines[line_idx].split(' ')[0])
     line_idx += 1
     sequence = []
     for idx in range(n_placements):
-        log(str(idx))
-        log(str(lines[line_idx].split(' ')))
-        [pos_x, tile_idx] = lines[line_idx].split(' ')
+        [pos_x, tile_idx] = map(int,lines[line_idx].split(' '))
         sequence += [(tile_idx, pos_x)]
         line_idx += 1
         frequencies[tile_idx] += tiles_areas[tile_idx]

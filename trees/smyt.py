@@ -32,7 +32,7 @@ with open('input.deg', 'r') as f:
     for idx in range(0,number_of_degrees):
         line = lines[idx+1].split()
         deg = int(line[0].strip()) # degree
-        assert output.has_key(deg) == False, \
+        assert not(deg in output.keys()), \
                 "duplicate degree"
 
         if len(line) > 1:
@@ -46,7 +46,7 @@ with open('input.deg', 'r') as f:
 
 print("")
 print ("instance Show Tree where")
-for deg, freq in output.iteritems():
+for deg, freq in output.items():
     if deg == 0:
         print ("   show " + datatype(deg) + " = " + rhs(deg))
     else:

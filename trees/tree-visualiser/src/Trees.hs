@@ -19,12 +19,15 @@ import Control.Monad (void)
 import System.IO
 
 import Text.Megaparsec
-import Text.Megaparsec.String
+import Text.Megaparsec.Char
+import qualified Text.Megaparsec.Char.Lexer as L
 
-import qualified Text.Megaparsec.Lexer as L
+import Data.Void
 
 import Data.MultiSet (MultiSet)
 import qualified Data.MultiSet as S
+
+type Parser = Parsec Void String 
 
 data Tree = Node [Tree]
     deriving (Show)
@@ -65,14 +68,15 @@ treeStmt = do
 
 parseFromFile :: Parsec e String a
               -> String
-              -> IO (Either (ParseError Char e) a)
+              -> IO (Either (ParseErrorBundle String e) a)
 
 parseFromFile p file = runParser p file <$> readFile file
 
 -- | Parses the given tree specification.
-parseTree :: String -> IO (Either (ParseError Char Dec) Tree)
+--parseTree :: String -> IO (Either (ParseError Char Dec) Tree)
 parseTree = parseFromFile treeStmt
 
 -- | Prints the given parsing errors.
-printError :: ParseError Char Dec -> IO ()
-printError err = putStr $ parseErrorPretty err
+--printError :: ParseError Char Dec -> IO ()
+printError err = putStr $ errorBundlePretty err
+

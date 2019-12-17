@@ -21,12 +21,12 @@ try:
     import sys
     import os
 except:
-    print "Something went wrong, cannot import package 'sys' or 'os'"
+    print ("Something went wrong, cannot import package 'sys' or 'os'")
     exit(1)
 
-if sys.version_info.major > 2:
-    sys.stderr.write('You are using Python 3. Please use Python 2.\n')
-    exit(1)
+# if sys.version_info.major > 2:
+#     sys.stderr.write('You are using Python 3. Please use Python 2.\n')
+#     exit(1)
 
 #-- Better hints at non-installed packages
 list_of_noninstalled_packages = []
@@ -135,7 +135,7 @@ objective = cvxpy.Minimize( B - expectations * u )
 constraints = [
     B >= np.array([
         1.0 / (j + 1)
-        for j in xrange(n_substitutions)
+        for j in range(n_substitutions)
     ]) * m
 ] + [
     cvxpy.log(m[idx] + 1) >= - sum([
@@ -337,8 +337,27 @@ def lex_cmp(a, b):
     if a[idx] > b[idx]:
         return 1
 
+def cmp_to_key(mycmp):
+    'Convert a cmp= function into a key= function'
+    class K(object):
+        def __init__(self, obj, *args):
+            self.obj = obj
+        def __lt__(self, other):
+            return mycmp(self.obj, other.obj) < 0
+        def __gt__(self, other):
+            return mycmp(self.obj, other.obj) > 0
+        def __eq__(self, other):
+            return mycmp(self.obj, other.obj) == 0
+        def __le__(self, other):
+            return mycmp(self.obj, other.obj) <= 0
+        def __ge__(self, other):
+            return mycmp(self.obj, other.obj) >= 0
+        def __ne__(self, other):
+            return mycmp(self.obj, other.obj) != 0
+    return K
+    
 tableau = sample_tableau()
-tableau = np.array(sorted(tableau, cmp=lex_cmp))
+tableau = np.array(sorted(tableau, key=cmp_to_key(lex_cmp)))
 
 ##
 ## Create visualization output
@@ -362,8 +381,8 @@ for idx in range(n_colors):
 sys.stdout.write(str(n_placements) + '\n')
 for row in reversed(tableau):
     position = 0
-    for color in xrange(n_colors):
-        for it in xrange(row[color]):
+    for color in range(n_colors):
+        for it in range(row[color]):
             placements += [ (position, color) ]
             position += 1
 
