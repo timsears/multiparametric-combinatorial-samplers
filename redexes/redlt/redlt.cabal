@@ -14,9 +14,11 @@ library
   hs-source-dirs:      src
   exposed-modules:     Sampler
   build-depends:       base >= 4.7 && < 5
+                     , buffon-machines
                      , random >= 1.1
                      , mtl >= 2.2.1
                      , MonadRandom >= 0.5.1
+                     , template-haskell >= 2.14
                      , transformers >= 0.4.2
   default-language:    Haskell2010
 

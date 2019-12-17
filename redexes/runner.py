@@ -45,17 +45,17 @@ if args.mode == 'compile':
 
     tasks = 5
     progress(tasks,"Generating paganini specification...")
-    pipe(['bb','--force','-s','specification.in'],'paganini.pg')
+    pipe(['bb','spec','-f','-i','specification.in'],'paganini.pg')
 
     progress(tasks,"Calculating tuning parameters...")
-    pipe(['paganini','-i','paganini.pg','-p','1.0e-9'],'bb.param')
+    pipe(['medulla','-i','paganini.pg','-p','1.0e-9'],'bb.param')
 
     progress(tasks,"Sampler generation...")
-    pipe(['bb','--force','-p','bb.param','specification.in'],'redlt/src/Sampler.hs')
+    pipe(['bb','compile','-f','-t','bb.param','-i','specification.in'],'redlt/src/Sampler.hs')
 
     os.chdir('redlt/')
     progress(tasks,"Compilation... May take some time...")
-    pipe(['stack','install'])
+    pipe(['cabal','install','--overwrite-policy=always'])
     os.chdir('..')
 
     progress(tasks,"Done.")

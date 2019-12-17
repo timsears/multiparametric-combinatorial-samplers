@@ -55,4 +55,10 @@ main = do
     let t' = toLambda t
     let n = size t'
     let r = redexes t'
+    print "lamba expression"
+    print t'
+    print "redex size / expression size"
     print $ fromIntegral r / fromIntegral n
+    print "(lambda, redex) size"
+    print (n, r)
+
