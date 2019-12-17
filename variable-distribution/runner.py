@@ -45,17 +45,17 @@ if args.mode == 'compile':
 
     tasks = 5
     progress(tasks,"Generating paganini specification...")
-    pipe(['bb','--force','-s','specification.in'],'paganini.pg')
+    pipe(['bb','spec', '-f','-i','specification.in'],'paganini.pg')
 
     progress(tasks,"Calculating tuning parameters...")
-    pipe(['paganini','-i','paganini.pg','-p','1.0e-20'],'bb.param')
+    pipe(['medulla','-i','paganini.pg','-p','1.0e-20'],'bb.param')
 
     progress(tasks,"Sampler generation...")
-    pipe(['bb','--force','-p','bb.param','specification.in'],'lambda-visualizer/src/Sampler.hs')
+    pipe(['bb','compile','-f','-t','bb.param','-i','specification.in'],'lambda-visualizer/src/Sampler.hs')
 
     os.chdir('lambda-visualizer/')
     progress(tasks,"Compilation... May take some time...")
-    pipe(['stack','install'])
+    pipe(['cabal','install','--overwrite-policy=always'])
     os.chdir('..')
 
     progress(tasks,"Done.")
@@ -63,12 +63,15 @@ if args.mode == 'compile':
 
 if args.mode == "generate":
 
-    (lb, ub) = (100000, 120000)
+    (lb, ub) = (10000, 12000)
     log("Generating a random lambda term of size [" + str(lb) + ", " + str(ub) + "]...")
     pipe(['lambda-term-visualiser',str(lb),str(ub)], 'term.dot')
 
     log("Generating a EPS file...")
     pipe(['dot','-Teps','term.dot'], 'term.eps')
+
+    log('Generating PNG file...')
+    pipe(['convert','-density','300','term.eps','term.png'])
 
     log("Done.")
     exit(0)
@@ -79,6 +82,7 @@ if args.mode == "clean":
     pipe(['rm','paganini.pg'])
     pipe(['rm','term.dot'])
     pipe(['rm','term.eps'])
+    pipe(['rm','term.png'])
     exit(0)
 
 log("Illegal runner mode: expected compile, generate or clean.")

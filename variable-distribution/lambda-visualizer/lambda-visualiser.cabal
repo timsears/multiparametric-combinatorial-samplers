@@ -18,12 +18,14 @@ library
                      , Sampler
                      , Visualisation
   build-depends:       base >= 4.7 && < 5
+                     , buffon-machines
                      , graphviz >= 2999.18
                      , text >= 1.2.2.2
                      , multiset >= 0.3.3
                      , random >= 1.1
                      , containers >= 0.5.6.2
                      , mtl >= 2.2.1
+                     , template-haskell >= 2.14
                      , transformers >= 0.4.2
                      , MonadRandom >= 0.5.1
   default-language:    Haskell2010
